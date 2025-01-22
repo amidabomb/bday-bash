@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Countdown</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            background: teal;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: background-color 1s;
+        }
+        #countdown {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        #video-container {
+            display: none;
+            width: 90%;
+            max-width: 600px;
+        }
+        video {
+            width: 100%;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div id="countdown">Loading...</div>
+    <div id="video-container">
+        <video id="video" controls>
+            <source id="video-source" src="vid1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const countdownElement = $('#countdown');
+            const videoContainer = $('#video-container');
+            const videoElement = $('#video');
+            const videoSource = $('#video-source');
+
+            const videos = ["vid1.mp4", "vid2.mp4", "vid3.mp4", "video.mp4"];
+            let currentVideoIndex = 0;
+
+            function updateCountdown() {
+                const birthday = new Date();
+                birthday.setHours(24, 0, 0, 0); // Set to midnight today
+                const now = new Date();
+                const difference = birthday - now;
+
+                if (difference <= 0) {
+                    countdownElement.hide(); // Hide the countdown
+                    videoContainer.show(); // Show the video player
+                    videoElement[0].play(); // Start the first video
+                    clearInterval(interval);
+                } else {
+                    const hours = Math.floor(difference / (1000 * 60 * 60));
+                    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+                    countdownElement.text(`${hours}h ${minutes}m ${seconds}s`);
+                }
+            }
+
+            function playNextVideo() {
+                currentVideoIndex++;
+                if (currentVideoIndex < videos.length) {
+                    videoSource.attr('src', videos[currentVideoIndex]); // Update video source
+                    videoElement[0].load(); // Reload video player
+                    videoElement[0].play(); // Play next video
+                } else {
+                    // Optionally do something when all videos are done
+                    alert("Happy Birthday! All videos have been played!");
+                }
+            }
+
+            // Event listener for when a video ends
+            videoElement.on('ended', playNextVideo);
+
+            const interval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+        });
+    </script>
+</body>
+</html>
